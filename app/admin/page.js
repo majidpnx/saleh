@@ -11,16 +11,18 @@ export default function AdminPage() {
     const res = await fetch('/api/getorders');
     const data = await res.json();
     setOrders(data);
+    console.log(data)
     setLoading(false);
   };
 
-  const markDone = async (index) => {
+  const markDone = async (id) => {
+    console.log(id)
     const res = await fetch('/api/getorders', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ index }),
+      body: JSON.stringify({ id }),
     });
-
+console.log(res)
     if (res.ok) fetchOrders();
   };
 
@@ -62,7 +64,7 @@ export default function AdminPage() {
               {!order.done && (
                 <button
                   className="mt-2 px-4 py-2 bg-primary text-white rounded"
-                  onClick={() => markDone(index)}
+                  onClick={() => markDone(order._id)}
                 >
                   تیک انجام شد ✅
                 </button>

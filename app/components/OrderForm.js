@@ -44,6 +44,8 @@ export default function OrderForm() {
             if (res.ok) {
                 setMessage(data.message);
                 setFormData({ name: '', phone: '', address: '' });
+        alert('درخواست شما با موفقیت ثبت شد ✅');
+
             } else {
                 setMessage(data.message || 'مشکلی پیش آمد.');
             }
