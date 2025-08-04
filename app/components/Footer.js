@@ -1,3 +1,4 @@
+
 export default function Footer() {
   return (
     <footer className="bg-primary text-primary-foreground py-6 mt-12">
