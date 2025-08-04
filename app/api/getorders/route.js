@@ -1,34 +1,39 @@
-import { writeFile, readFile } from 'fs/promises';
-import { join } from 'path';
-import { NextResponse } from 'next/server';
-
-const dataDir = join(process.cwd(), 'data');
-const filePath = join(dataDir, 'orders.json'); // 👈 این باید بالا تعریف بشه و در همه توابع استفاده بشه
-
-export async function GET() {
-  const data = await readFile(filePath, 'utf8');
-  return NextResponse.json(JSON.parse(data));
-}
+// app/api/orders/route.js
+import { connectDB } from '../..//lib/db';
+import Order from '../../models/Order';
 
 export async function POST(req) {
-  const body = await req.json();
-  const orders = JSON.parse(await readFile(filePath, 'utf8'));
+  try {
+    await connectDB();
+    console.log('werwerwer')
+    const body = await req.json();
+    const order = await Order.create(body);
+    return Response.json({ message: 'سفارش ثبت شد', order });
+  } catch (err) {
+    console.error(err);
+    return Response.json({ message: 'خطا در ثبت سفارش' }, { status: 500 });
+  }
+}
 
-  orders.push({ ...body, createdAt: new Date().toISOString(), done: false });
-
-  await writeFile(filePath, JSON.stringify(orders, null, 2));
-  return NextResponse.json({ message: 'سفارش ثبت شد.' });
+export async function GET() {
+  try {
+    await connectDB();
+    const orders = await Order.find().sort({ createdAt: -1 });
+    return Response.json(orders);
+  } catch (err) {
+    console.error(err);
+    return Response.json({ message: 'خطا در دریافت سفارشات' }, { status: 500 });
+  }
 }
 
 export async function PUT(req) {
-  const { index } = await req.json();
-  const orders = JSON.parse(await readFile(filePath, 'utf8'));
-
-  if (orders[index]) {
-    orders[index].done = true;
-    await writeFile(filePath, JSON.stringify(orders, null, 2));
-    return NextResponse.json({ message: 'سفارش تیک خورد.' });
+  try {
+    await connectDB();
+    const { id } = await req.json();
+    const updated = await Order.findByIdAndUpdate(id, { done: true }, { new: true });
+    if (!updated) return Response.json({ message: 'سفارش پیدا نشد' }, { status: 404 });
+    return Response.json({ message: 'سفارش بروزرسانی شد', order: updated });
+  } catch (err) {
+    return Response.json({ message: 'خطا در بروزرسانی' }, { status: 500 });
   }
-
-  return NextResponse.json({ message: 'سفارش پیدا نشد.' }, { status: 404 });
 }
