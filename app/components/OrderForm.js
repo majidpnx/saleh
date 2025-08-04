@@ -1,7 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import LocationButton from './LocationButton'
+
+import dynamic from 'next/dynamic';
+
+const LocationButton = dynamic(() => import('./LocationButton'), {
+  ssr: false
+});
+// import LocationButton from './LocationButton'
 
 export default function OrderForm() {
     const [formData, setFormData] = useState({
