@@ -8,7 +8,7 @@ import About from './components/About';
 import Footer from './components/Footer';
 import dynamic from 'next/dynamic';
 
-const OrderForm = dynamic(() => import('./OrderForm'), {
+const OrderForm = dynamic(() => import('./components/OrderForm'), {
   ssr: false
 });
 
